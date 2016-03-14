@@ -15,10 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mian.cpp">
+    <ClCompile Include="GraphList.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GraphList.cpp">
+    <ClCompile Include="Dijkstra.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
