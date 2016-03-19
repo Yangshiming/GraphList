@@ -38,7 +38,8 @@ void Dijkstra(GraphList* graph,int v0)
 	S[v0] = true; 
 	link = graph->m_vVertex[v0].firstLink;
 	int lastMinVertexID = graph->m_vVertex[v0].VertexID;
-	while(S[graph->m_vVertex[lastMinVertexID].firstLink] != true )
+	int flag = 0; //flag = 0 则代表当前点的相邻点还有不是S[]集合的
+	while(flag == 0 )
 	{
 		int tempVert = -1;
 		int tempMin = MAXINT;
@@ -60,6 +61,19 @@ void Dijkstra(GraphList* graph,int v0)
 		S[lastMinVertexID] = true
 		dist[lastMinVertexID] = tempMin;
 		//判断当前点的所有相连点是否遍历玩，如果完，则置flag =1
+		link = graph->m_vVertex[lastMinVertexID].firstLink;
+		int secondVertID = graph->m_vVertex[lastMinVertexID].firstLink->endVertexID;
+
+		do 
+		{
+			if (S[secondVertID] != true)
+			{
+				flag = 0;
+			}
+			link = link->next;
+			secondVertID = link->endVertexID;
+			
+		} while (flag == 1);
 		
 	}
 	for(int i=2; i<=n; i++)
