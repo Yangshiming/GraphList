@@ -1,29 +1,28 @@
+#include <iostream> 
 #include "GraphList.h"
+using namespace std;
 const int  MAXINT = 32767;
 const int MAXNUM = 600;
 int A[MAXNUM][MAXNUM];
 
 
-void Dijkstra(GraphList* graph,int v0)
+void Dijkstra(GraphList* graph,int v0,int v1)
 {
 	bool S[MAXNUM];                                  // 判断是否已存入该点到S集合中
     int  n=MAXNUM;
 	int dist[MAXNUM];
 	int prev[MAXNUM];
 
-	for(int i=1; i<=n; ++i)
+	//将每一个定点的pre置-1，并将到v0的距离置为max。
+	for(int i=0; i<n; ++i)
 	{
-		//dist[i] = A[v0][i];
-		//S[i] = false;                                // 初始都未用过该点
-		//if(dist[i] == MAXINT)    
-		//  prev[i] = -1;
-		//else 
-		//  prev[i] = v0;
+
+		S[i] = false;
 		prev[i] = -1;
 		dist[i] = MAXINT;
 	}
 
-	// 
+	// 将初始点v0的所有相邻距离都置为权值，上一个最佳相邻点设为v0。
 	Link* link = graph->m_vVertex[v0].firstLink;
 	dist[v0] = 0;
 	prev[v0] = v0;
@@ -44,12 +43,17 @@ void Dijkstra(GraphList* graph,int v0)
 		int tempVert = -1;
 		int tempMin = MAXINT;
 		int minCostVertID  = -1;
+		link = graph->m_vVertex[lastMinVertexID].firstLink;
 		while(link)
 		{
 			//1. 遍历当前节点的相邻边，2. 将相邻边的权值与这一点一个节点的距离权值相加，如果小于它之前的权值，就更新 
 			//3.比较它和其他邻接点的值，如果最小，则就记住他的ID，将它加入S集合       4.更新当前点为最小权值点
-			dist[link->endVertexID] = dist[lastMinVertexID]+ link->Cost ;
-			prev[link->endVertexID] = lastMinVertexID;
+			int distValue = dist[lastMinVertexID]+ link->Cost ;			
+			if (distValue < dist[link->endVertexID])
+			{
+				dist[link->endVertexID] = distValue;
+				prev[link->endVertexID] = lastMinVertexID;
+			}
 			if (link->Cost < tempMin)
 			{
 				tempMin = link->Cost;
@@ -57,45 +61,53 @@ void Dijkstra(GraphList* graph,int v0)
 			}
 			link = link->next;
 		}
-		lastMinVertexID = minCostVertID;
-		S[lastMinVertexID] = true
-		dist[lastMinVertexID] = tempMin;
-		//判断当前点的所有相连点是否遍历玩，如果完，则置flag =1
-		link = graph->m_vVertex[lastMinVertexID].firstLink;
-		int secondVertID = graph->m_vVertex[lastMinVertexID].firstLink->endVertexID;
 
-		do 
+
+		
+		
+		//从U中选距离最短的为当前最新的k顶点,并加入S
+		int minPath = MAXINT;
+		for(int i=1; i<n; ++i)
 		{
-			if (S[secondVertID] != true)
+			if (graph->m_vVertex[i].VertexID != -1)
 			{
-				flag = 0;
+				if (S[i] != true)
+				{
+					if (dist[i] <= minPath)
+					{
+						lastMinVertexID = i;
+						minPath = dist[i];
+					}
+				}
 			}
-			link = link->next;
-			secondVertID = link->endVertexID;
+		}
+		S[lastMinVertexID] = true;
+		//cout<<"%%"<<lastMinVertexID<<endl;
+		
+		//判断所有顶点是否全部属于S，如果完，则置flag =1
+		for(int i=1; i<n; ++i)
+		{
 			
-		} while (flag == 1);
+			if (S[i] != true)
+			{
+				if (graph->m_vVertex[i].VertexID != -1)
+				{
+					flag = 0;
+					break;
+				}
+			}
+			else
+				flag = 1;
+		}
 		
 	}
-	for(int i=2; i<=n; i++)
-	{
-		int mindist = MAXINT;
-		int u = v0;                // 找出当前未使用的点j的dist[j]最小值
-		for(int j=1; j<=n; ++j)
-		if((!S[j]) && dist[j]<mindist)
-			{
-				u = j;                             // u保存当前邻接点中距离最小的点的号码 
-				mindist = dist[j];
-			}
 
-		S[u] = true;
-		for(int j=1; j<=n; j++)
-		if((!S[j]) && A[u][j]<MAXINT)
-			{
-				if(dist[u] + A[u][j] < dist[j])     //在通过新加入的u点路径找到离v0点更短的路径  
-					{
-						dist[j] = dist[u] + A[u][j];    //更新dist 
-						prev[j] = u;                    //记录前驱顶点 
-					}
-			}
+	cout<<v1<<"<<";
+	while(prev[v1] != v0)
+	{
+		cout<<prev[v1]<<"<<";
+		v1 = prev[v1];
 	}
+	cout<<v0;
+
 }
